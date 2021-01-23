@@ -47,9 +47,13 @@ func request(conn net.Conn) {
 			fmt.Println(httpURI)
 
 			if httpURI == "/foo" {
-				foo(conn)
-			}
-			if httpURI == "/bar" {
+				if httpMethod == "GET" {
+					foo(conn)
+				}
+				if httpMethod == "POST" {
+
+				}
+			} else if httpURI == "/bar" {
 				bar(conn)
 			} else {
 				index(conn)
@@ -64,16 +68,16 @@ func request(conn net.Conn) {
 }
 
 func index(conn net.Conn) {
-	body := "<!DOCTYPE html><html><head>Hello World!</head><body>Dear Grupetto</body></html>"
+	body := "<!DOCTYPE html><html><head>Hello World!\n</head><body><a href=\"/index\">index</a>\n<a href=\"/foo\">foo</a>\n<a href=\"/bar\">bar</a>\n</body></html>"
 	httpRespond(conn, body)
 }
 
 func foo(conn net.Conn) {
-	body := "<!DOCTYPE html><html><head>Hello Foo!</head><body>Foz</body></html>"
+	body := "<!DOCTYPE html><html><head>Hello Foo!\n</head><body><a href=\"/index\">index</a>\n<a href=\"/foo\">foo</a>\n<a href=\"/bar\">bar</a>\n</body></html>"
 	httpRespond(conn, body)
 }
 func bar(conn net.Conn) {
-	body := "<!DOCTYPE html><html><head>Hello Bar!</head><body>Baz</body></html>"
+	body := "<!DOCTYPE html><html><head>Hello Bar!\n</head><body><a href=\"/index\">index</a>\n<a href=\"/foo\">foo</a>\n<a href=\"/bar\">bar</a>\n</body></html>"
 	httpRespond(conn, body)
 }
 
