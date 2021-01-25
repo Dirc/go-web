@@ -29,8 +29,6 @@ func handle(conn net.Conn) {
 	defer conn.Close()
 
 	request(conn)
-
-	//respond(conn)
 }
 
 // Read request method and uri
@@ -41,23 +39,7 @@ func request(conn net.Conn) {
 		ln := scanner.Text()
 		fmt.Println(ln)
 		if i == 0 {
-			httpMethod := strings.Fields(ln)[0]
-			httpURI := strings.Fields(ln)[1]
-			fmt.Println(httpMethod)
-			fmt.Println(httpURI)
-
-			if httpURI == "/foo" {
-				if httpMethod == "GET" {
-					foo(conn)
-				}
-				if httpMethod == "POST" {
-
-				}
-			} else if httpURI == "/bar" {
-				bar(conn)
-			} else {
-				index(conn)
-			}
+			mux(conn, ln)
 		}
 		if ln == "" {
 			break
@@ -67,17 +49,40 @@ func request(conn net.Conn) {
 	}
 }
 
+func mux(conn net.Conn, ln string) {
+	httpMethod := strings.Fields(ln)[0]
+	httpURI := strings.Fields(ln)[1]
+	fmt.Println(httpMethod)
+	fmt.Println(httpURI)
+
+	if httpURI == "/foo" {
+		foo(conn)
+	} else if httpURI == "post" && httpMethod == "POST" {
+		post(conn)
+	} else if httpURI == "/bar" {
+		bar(conn)
+	} else {
+		index(conn)
+	}
+
+}
+
 func index(conn net.Conn) {
-	body := "<!DOCTYPE html><html><head>Hello World!\n</head><body><a href=\"/index\">index</a>\n<a href=\"/foo\">foo</a>\n<a href=\"/bar\">bar</a>\n</body></html>"
+	body := "<!DOCTYPE html><html><head>Hello World!\n</head><body><a href=\"/index\">index</a>\n<a href=\"/foo\">foo</a>\n<a href=\"/bar\">bar</a>\n<a href=\"/post\">post</a>\n</body></html>"
 	httpRespond(conn, body)
 }
 
 func foo(conn net.Conn) {
-	body := "<!DOCTYPE html><html><head>Hello Foo!\n</head><body><a href=\"/index\">index</a>\n<a href=\"/foo\">foo</a>\n<a href=\"/bar\">bar</a>\n</body></html>"
+	body := "<!DOCTYPE html><html><head>Hello Foo!\n</head><body><a href=\"/index\">index</a>\n<a href=\"/foo\">foo</a>\n<a href=\"/bar\">bar</a>\n<a href=\"/post\">post</a>\n</body></html>"
 	httpRespond(conn, body)
 }
 func bar(conn net.Conn) {
-	body := "<!DOCTYPE html><html><head>Hello Bar!\n</head><body><a href=\"/index\">index</a>\n<a href=\"/foo\">foo</a>\n<a href=\"/bar\">bar</a>\n</body></html>"
+	body := "<!DOCTYPE html><html><head>Hello Bar!\n</head><body><a href=\"/index\">index</a>\n<a href=\"/foo\">foo</a>\n<a href=\"/bar\">bar</a>\n<a href=\"/post\">post</a>\n</body></html>"
+	httpRespond(conn, body)
+}
+
+func post(conn net.Conn) {
+	body := `<!DOCTYPE html><html><head>Hello Bar!\n</head><body><a href=\"/index\">index</a>\n<a href=\"/foo\">foo</a>\n<a href=\"/bar\">bar</a>\n<FORM ACTION="post" METHOD=POST><P>Please Fill the Registration Form</p><br>Enter Your Name<input type="text" name="username"><br><input type="submit" value="post"></FORM></body></html>` 
 	httpRespond(conn, body)
 }
 
